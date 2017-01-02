@@ -1,30 +1,90 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
-
 import React, { Component } from 'react';
 import {
+  Animated,
   AppRegistry,
+  Easing,
   StyleSheet,
   Text,
   View
 } from 'react-native';
+import RNShakeEvent from 'react-native-shake-event';
+
+const getNumber = () => {
+  let max = 21;
+  let min = 1;
+  return Math.floor(Math.random() * (max - min) + min);
+}
 
 export default class TwentySidedDieRoller extends Component {
+  componentWillMount() {
+    RNShakeEvent.addEventListener('shake', () => {
+      this.state = { spinValue: new Animated.Value(10) };
+
+      let spin = this.state.spinValue.interpolate({
+        inputRange: [0, 1],
+        outputRange: ['0deg', '360deg']
+      })
+
+      Animated.timing(
+          this.state.spinValue,
+        {
+          toValue: 1,
+          duration: 3000,
+          easing: Easing.linear
+        }
+      ).start()
+        
+      this.setState({ spin: spin,
+                      number: getNumber(),
+                      spinValue: new Animated.Value(1)
+                   });
+      });
+  }
+ 
+  componentWillUnmount() {
+    RNShakeEvent.removeEventListener('shake');
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = { spinValue: new Animated.Value(5) };
+
+    let spin = this.state.spinValue.interpolate({
+      inputRange: [0, 1],
+      outputRange: ['0deg', '360deg']
+    })
+
+    Animated.timing(
+        this.state.spinValue,
+      {
+        toValue: 1,
+        duration: 3000,
+        easing: Easing.linear
+      }
+    ).start()
+
+    this.state = { spin: spin,
+                   number: getNumber(),
+                   spinValue: new Animated.Value(5)
+                 };
+
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
+        <Animated.Text style={{ opacity: this.state.fadeAnim, 
+                                fontSize: 160,
+                                textAlign: 'center',
+                                transform: [{rotate: this.state.spin}] 
+                             }}>
+          ◆
+        </Animated.Text>
+        <Text style={styles.number}>
+          { this.state.number } 
         </Text>
         <Text style={styles.instructions}>
-          To get started, edit index.android.js
-        </Text>
-        <Text style={styles.instructions}>
-          Double tap R on your keyboard to reload,{'\n'}
-          Shake or press menu button for dev menu
+          To roll, just shake your device.
         </Text>
       </View>
     );
@@ -38,16 +98,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
   },
-  welcome: {
-    fontSize: 20,
+
+  diamond: {
+    fontSize: 160,
     textAlign: 'center',
-    margin: 10,
+    marginBottom: -200,
+    marginTop: 200 
   },
-  instructions: {
+
+  number: {
+    fontSize: 40,
     textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
+    marginTop: -120,
+    marginBottom: 120,
+    color: 'white'
+  }
 });
 
 AppRegistry.registerComponent('TwentySidedDieRoller', () => TwentySidedDieRoller);
