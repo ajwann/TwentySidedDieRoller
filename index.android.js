@@ -9,15 +9,12 @@ import {
 } from 'react-native';
 import RNShakeEvent from 'react-native-shake-event';
 
-const getNumber = () => {
-  let max = 21;
-  let min = 1;
-  return Math.floor(Math.random() * (max - min) + min);
-}
 
 export default class TwentySidedDieRoller extends Component {
   componentWillMount() {
     RNShakeEvent.addEventListener('shake', () => {
+      this.setState({ number: this.getNumber() });
+      /*
       this.state = { spinValue: new Animated.Value(10) };
 
       let spin = this.state.spinValue.interpolate({
@@ -39,6 +36,8 @@ export default class TwentySidedDieRoller extends Component {
                       spinValue: new Animated.Value(1)
                    });
       });
+      */
+    });
   }
  
   componentWillUnmount() {
@@ -47,7 +46,8 @@ export default class TwentySidedDieRoller extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { spinValue: new Animated.Value(5) };
+    this.state = { number: this.getNumber() };
+    /* this.state = { spinValue: new Animated.Value(5) };
 
     let spin = this.state.spinValue.interpolate({
       inputRange: [0, 1],
@@ -67,16 +67,23 @@ export default class TwentySidedDieRoller extends Component {
                    number: getNumber(),
                    spinValue: new Animated.Value(5)
                  };
+    */
 
+  }
+
+  getNumber() {
+    let max = 21;
+    let min = 1;
+    return Math.floor(Math.random() * (max - min) + min);
   }
 
   render() {
     return (
       <View style={styles.container}>
-        <Animated.Text style={{ opacity: this.state.fadeAnim, 
+        <Animated.Text style={{ //opacity: this.state.fadeAnim, 
                                 fontSize: 160,
-                                textAlign: 'center',
-                                transform: [{rotate: this.state.spin}] 
+                                textAlign: 'center'//,
+                                //transform: [{rotate: this.state.spin}] 
                              }}>
           ◆
         </Animated.Text>
